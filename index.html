@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>霓虹粉碎 · Neon Crush</title>
-  <meta name="description" content="赛博朋克风格的方块消除休闲游戏">
+  <meta name="description" content="赛博朋克风格的宝石消除休闲游戏">
   <meta name="theme-color" content="#0a0a1a">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap');
@@ -21,15 +21,11 @@
       --neon-purple: #b44aff;
       --neon-orange: #ff8800;
       --neon-yellow: #ffdd00;
+      --neon-red: #ff3333;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
+    html, body { height: 100%; overflow: hidden; touch-action: manipulation; }
 
     body {
       font-family: 'Noto Sans SC', sans-serif;
@@ -43,137 +39,109 @@
       position: relative;
     }
 
-    /* 背景网格 */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image:
         linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
       background-size: 30px 30px;
-      pointer-events: none;
-      z-index: 0;
+      pointer-events: none; z-index: 0;
     }
 
-    /* 扫描线 */
     body::after {
       content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      background: repeating-linear-gradient(
-        0deg, transparent, transparent 2px,
-        rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px
-      );
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px);
     }
 
     /* ===== 主菜单 ===== */
     #menu-screen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      background: var(--bg);
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100; background: var(--bg);
       transition: opacity 0.5s, visibility 0.5s;
     }
-
-    #menu-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
+    #menu-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
     .menu-glow {
       position: absolute;
       width: 400px; height: 400px;
       border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.15;
+      filter: blur(120px); opacity: 0.15;
       pointer-events: none;
     }
-
     .menu-glow-1 { top: 10%; left: 20%; background: var(--neon-pink); }
     .menu-glow-2 { bottom: 15%; right: 15%; background: var(--neon-blue); }
 
     .menu-title {
       font-family: 'Orbitron', sans-serif;
       font-size: clamp(36px, 8vw, 64px);
-      font-weight: 900;
-      text-align: center;
-      margin-bottom: 8px;
-      position: relative;
-      z-index: 1;
+      font-weight: 900; text-align: center;
+      margin-bottom: 8px; position: relative; z-index: 1;
       background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue), var(--neon-purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-shadow: none;
       filter: drop-shadow(0 0 30px rgba(255,45,122,0.3));
     }
 
     .menu-subtitle {
       font-family: 'Orbitron', sans-serif;
-      font-size: 14px;
-      color: var(--text-dim);
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      margin-bottom: 48px;
-      position: relative;
-      z-index: 1;
+      font-size: 14px; color: var(--text-dim);
+      letter-spacing: 6px; text-transform: uppercase;
+      margin-bottom: 48px; position: relative; z-index: 1;
+    }
+
+    .menu-gems {
+      display: flex; gap: 12px;
+      margin-bottom: 36px;
+      position: relative; z-index: 1;
+    }
+    .menu-gems svg {
+      width: 40px; height: 40px;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+      animation: menuGemFloat 3s ease-in-out infinite;
+    }
+    .menu-gems svg:nth-child(2) { animation-delay: 0.5s; }
+    .menu-gems svg:nth-child(3) { animation-delay: 1s; }
+    .menu-gems svg:nth-child(4) { animation-delay: 1.5s; }
+    .menu-gems svg:nth-child(5) { animation-delay: 2s; }
+    .menu-gems svg:nth-child(6) { animation-delay: 2.5s; }
+
+    @keyframes menuGemFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
 
     .menu-btn {
-      display: block;
-      width: 240px;
-      padding: 14px;
+      display: block; width: 260px; padding: 14px;
       margin-bottom: 12px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      border: 2px solid;
-      border-radius: 4px;
-      background: transparent;
-      cursor: pointer;
+      font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2px;
+      border: 2px solid; border-radius: 8px;
+      background: transparent; cursor: pointer;
       transition: all 0.2s;
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
     }
 
-    .menu-btn-play {
-      color: var(--neon-blue);
-      border-color: var(--neon-blue);
-    }
-
+    .menu-btn-play { color: var(--neon-blue); border-color: var(--neon-blue); }
     .menu-btn-play:hover {
       background: rgba(0,212,255,0.1);
       box-shadow: 0 0 20px rgba(0,212,255,0.3), inset 0 0 20px rgba(0,212,255,0.1);
     }
-
-    .menu-btn-endless {
-      color: var(--neon-purple);
-      border-color: var(--neon-purple);
-    }
-
+    .menu-btn-endless { color: var(--neon-purple); border-color: var(--neon-purple); }
     .menu-btn-endless:hover {
       background: rgba(180,74,255,0.1);
       box-shadow: 0 0 20px rgba(180,74,255,0.3), inset 0 0 20px rgba(180,74,255,0.1);
     }
 
     .menu-highscore {
-      margin-top: 32px;
-      font-size: 12px;
-      color: var(--text-dim);
-      position: relative;
-      z-index: 1;
+      margin-top: 32px; font-size: 12px;
+      color: var(--text-dim); position: relative; z-index: 1;
     }
-
     .menu-highscore strong {
       color: var(--neon-yellow);
       font-family: 'Orbitron', sans-serif;
@@ -182,44 +150,31 @@
 
     /* ===== 游戏 HUD ===== */
     #game-screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 500px;
-      padding: 12px;
-      position: relative;
-      z-index: 1;
+      display: none; flex-direction: column;
+      align-items: center; width: 100%;
+      max-width: 500px; padding: 8px 12px;
+      position: relative; z-index: 1;
     }
 
     .hud {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
-      width: 100%;
-      margin-bottom: 12px;
-      padding: 8px 16px;
+      width: 100%; margin-bottom: 8px;
+      padding: 8px 12px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
     }
 
-    .hud-item {
-      text-align: center;
-    }
-
+    .hud-item { text-align: center; }
     .hud-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-size: 9px; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 1px;
       font-family: 'Orbitron', sans-serif;
     }
-
     .hud-value {
       font-family: 'Orbitron', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 18px; font-weight: 700;
     }
 
     .hud-score .hud-value { color: var(--neon-yellow); }
@@ -228,43 +183,79 @@
     .hud-moves .hud-value { color: var(--neon-green); }
 
     .hud-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.2s;
+      background: none; border: 1px solid var(--border);
+      color: var(--text-dim); padding: 6px 10px;
+      border-radius: 4px; font-size: 16px;
+      cursor: pointer; transition: all 0.2s;
     }
+    .hud-btn:hover { color: var(--neon-pink); border-color: var(--neon-pink); }
 
-    .hud-btn:hover {
-      color: var(--neon-pink);
-      border-color: var(--neon-pink);
+    /* 关卡目标区域 */
+    .level-objective {
+      width: 100%; padding: 8px 12px;
+      margin-bottom: 8px;
+      background: rgba(18,18,42,0.8);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center;
+      gap: 12px;
     }
+    .obj-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      background: rgba(255,221,0,0.1);
+      border-radius: 8px; flex-shrink: 0;
+    }
+    .obj-info { flex: 1; min-width: 0; }
+    .obj-title {
+      font-size: 11px; font-weight: 700;
+      color: var(--neon-yellow);
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+    }
+    .obj-desc {
+      font-size: 12px; color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .obj-progress-bar {
+      width: 100%; height: 4px;
+      background: rgba(42,42,74,0.8);
+      border-radius: 2px;
+      margin-top: 4px; overflow: hidden;
+    }
+    .obj-progress-fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .obj-progress-fill.complete {
+      background: linear-gradient(90deg, var(--neon-yellow), var(--neon-orange));
+    }
+    .obj-count {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: var(--neon-blue);
+      flex-shrink: 0;
+    }
+    .obj-count.done { color: var(--neon-green); }
 
     /* 进度条 */
     .level-progress {
-      width: 100%;
-      height: 4px;
+      width: 100%; height: 4px;
       background: var(--surface);
-      border-radius: 2px;
-      margin-bottom: 12px;
+      border-radius: 2px; margin-bottom: 8px;
       overflow: hidden;
     }
-
     .level-progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-      border-radius: 2px;
-      transition: width 0.3s ease;
+      border-radius: 2px; transition: width 0.3s ease;
     }
 
     /* ===== 游戏板 ===== */
     #board {
-      display: grid;
-      gap: 3px;
-      padding: 8px;
+      display: grid; gap: 3px; padding: 6px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -273,83 +264,61 @@
     }
 
     .cell {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 4px;
-      cursor: pointer;
+      width: 100%; aspect-ratio: 1;
+      border-radius: 6px; cursor: pointer;
       transition: transform 0.15s, opacity 0.3s, filter 0.2s;
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(14px, 3.5vw, 22px);
-      user-select: none;
-      -webkit-user-select: none;
+      display: flex; align-items: center; justify-content: center;
+      user-select: none; -webkit-user-select: none;
+      overflow: hidden;
     }
 
-    .cell:hover {
-      transform: scale(1.08);
-      filter: brightness(1.3);
-      z-index: 2;
+    .cell svg {
+      width: 80%; height: 80%;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+      transition: filter 0.2s;
     }
 
-    .cell:active {
-      transform: scale(0.95);
-    }
+    .cell:hover { transform: scale(1.08); z-index: 2; }
+    .cell:hover svg { filter: drop-shadow(0 2px 6px rgba(255,255,255,0.3)) brightness(1.2); }
+    .cell:active { transform: scale(0.95); }
 
-    .cell.highlighted {
-      animation: cellGlow 0.5s ease infinite alternate;
-    }
-
+    .cell.highlighted { animation: cellGlow 0.5s ease infinite alternate; }
     @keyframes cellGlow {
       from { filter: brightness(1); }
-      to { filter: brightness(1.5) drop-shadow(0 0 8px currentColor); }
+      to { filter: brightness(1.4) drop-shadow(0 0 10px currentColor); }
     }
 
-    .cell.removing {
-      animation: cellPop 0.3s ease forwards;
-    }
-
+    .cell.removing { animation: cellPop 0.35s ease forwards; }
     @keyframes cellPop {
       0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.8; }
-      100% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.4) rotate(15deg); opacity: 0.8; }
+      100% { transform: scale(0) rotate(45deg); opacity: 0; }
     }
 
-    .cell.falling {
-      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .cell.spawning {
-      animation: cellSpawn 0.3s ease;
-    }
-
+    .cell.spawning { animation: cellSpawn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes cellSpawn {
-      from { transform: scale(0) rotate(180deg); opacity: 0; }
-      to { transform: scale(1) rotate(0); opacity: 1; }
+      from { transform: scale(0) translateY(-20px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
     }
 
-    /* 方块颜色 */
-    .cell-0 { background: linear-gradient(135deg, #ff1a5e, #ff4d8a); color: #fff; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2); }
-    .cell-1 { background: linear-gradient(135deg, #00b8e6, #00e5ff); color: #fff; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2); }
-    .cell-2 { background: linear-gradient(135deg, #00cc66, #00ff88); color: #fff; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2); }
-    .cell-3 { background: linear-gradient(135deg, #9933ff, #cc66ff); color: #fff; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2); }
-    .cell-4 { background: linear-gradient(135deg, #ff6600, #ff9933); color: #fff; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2); }
-    .cell-5 { background: linear-gradient(135deg, #e6cc00, #ffee33); color: #333; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15); }
+    /* 宝石底色 */
+    .cell-0 { background: linear-gradient(135deg, #cc0033, #ff1a5e); }
+    .cell-1 { background: linear-gradient(135deg, #0066cc, #00aaff); }
+    .cell-2 { background: linear-gradient(135deg, #00994d, #00dd6e); }
+    .cell-3 { background: linear-gradient(135deg, #7700cc, #aa44ff); }
+    .cell-4 { background: linear-gradient(135deg, #cc6600, #ff9922); }
+    .cell-5 { background: linear-gradient(135deg, #999900, #cccc00); }
 
     /* Combo 文字 */
     .combo-popup {
-      position: fixed;
-      pointer-events: none;
-      z-index: 5000;
+      position: fixed; pointer-events: none; z-index: 5000;
       font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      font-size: 48px;
+      font-weight: 900; font-size: 48px;
       color: var(--neon-pink);
       text-shadow: 0 0 30px var(--neon-pink);
       animation: comboFloat 1s ease forwards;
     }
-
     @keyframes comboFloat {
       0% { transform: scale(0.5) translateY(0); opacity: 0; }
       30% { transform: scale(1.2) translateY(-10px); opacity: 1; }
@@ -358,165 +327,121 @@
 
     /* 分数飘字 */
     .score-float {
-      position: absolute;
-      pointer-events: none;
-      z-index: 5000;
+      position: absolute; pointer-events: none; z-index: 5000;
       font-family: 'Orbitron', sans-serif;
-      font-weight: 700;
-      font-size: 18px;
+      font-weight: 700; font-size: 16px;
       color: var(--neon-yellow);
       text-shadow: 0 0 10px var(--neon-yellow);
       animation: scoreUp 0.8s ease forwards;
     }
-
     @keyframes scoreUp {
       0% { transform: translateY(0) scale(1); opacity: 1; }
       100% { transform: translateY(-50px) scale(1.3); opacity: 0; }
     }
 
+    /* 关卡通过弹窗 */
+    .level-up-banner {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none; z-index: 6000;
+      text-align: center;
+      animation: levelUpAnim 1.8s ease forwards;
+    }
+    .level-up-banner .lu-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 36px; font-weight: 900;
+      background: linear-gradient(135deg, var(--neon-yellow), var(--neon-orange));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .level-up-banner .lu-sub {
+      font-size: 14px; color: var(--text-dim);
+      margin-top: 4px;
+    }
+    @keyframes levelUpAnim {
+      0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+      20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      70% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    }
+
     /* ===== 结算画面 ===== */
     #result-screen {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(10,10,26,0.95);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      backdrop-filter: blur(10px);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 200; backdrop-filter: blur(10px);
     }
 
     .result-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 36px;
-      font-weight: 900;
+      font-size: 36px; font-weight: 900;
       margin-bottom: 8px;
       background: linear-gradient(135deg, var(--neon-yellow), var(--neon-orange));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
-    .result-subtitle {
-      font-size: 14px;
-      color: var(--text-dim);
-      margin-bottom: 32px;
-    }
+    .result-subtitle { font-size: 14px; color: var(--text-dim); margin-bottom: 32px; }
 
     .result-stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 32px;
-      max-width: 320px;
-      width: 100%;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 12px; margin-bottom: 32px;
+      max-width: 320px; width: 100%;
     }
-
     .result-stat {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-      text-align: center;
+      border-radius: 8px; padding: 16px; text-align: center;
     }
-
     .result-stat-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      font-size: 10px; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 1px;
       font-family: 'Orbitron', sans-serif;
     }
-
     .result-stat-value {
       font-family: 'Orbitron', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--neon-blue);
-      margin-top: 4px;
+      font-size: 24px; font-weight: 700;
+      color: var(--neon-blue); margin-top: 4px;
     }
 
-    .result-star {
-      font-size: 36px;
-      letter-spacing: 8px;
-      margin-bottom: 24px;
-    }
+    .result-star { font-size: 36px; letter-spacing: 8px; margin-bottom: 24px; }
 
     .result-new-record {
       font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      color: var(--neon-pink);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-      animation: blink 1s ease infinite;
+      font-size: 12px; color: var(--neon-pink);
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 24px; animation: blink 1s ease infinite;
     }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .result-btns {
-      display: flex;
-      gap: 12px;
-    }
-
+    .result-btns { display: flex; gap: 12px; }
     .result-btn {
       padding: 12px 24px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      border: 2px solid;
-      border-radius: 4px;
-      background: transparent;
-      cursor: pointer;
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      border: 2px solid; border-radius: 8px;
+      background: transparent; cursor: pointer;
       transition: all 0.2s;
     }
-
-    .result-btn-retry {
-      color: var(--neon-blue);
-      border-color: var(--neon-blue);
-    }
-
+    .result-btn-retry { color: var(--neon-blue); border-color: var(--neon-blue); }
     .result-btn-retry:hover {
       background: rgba(0,212,255,0.1);
       box-shadow: 0 0 15px rgba(0,212,255,0.3);
     }
+    .result-btn-menu { color: var(--text-dim); border-color: var(--border); }
+    .result-btn-menu:hover { color: var(--text); border-color: var(--text-dim); }
 
-    .result-btn-menu {
-      color: var(--text-dim);
-      border-color: var(--border);
-    }
-
-    .result-btn-menu:hover {
-      color: var(--text);
-      border-color: var(--text-dim);
-    }
-
-    /* 屏幕闪光 */
+    /* 屏幕闪光 & 震屏 */
     .screen-flash {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 8000;
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 8000;
       animation: flashAnim 0.3s ease forwards;
     }
+    @keyframes flashAnim { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
 
-    @keyframes flashAnim {
-      0% { opacity: 0; }
-      20% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    /* 震屏 */
-    .shake {
-      animation: shakeAnim 0.3s ease;
-    }
-
+    .shake { animation: shakeAnim 0.3s ease; }
     @keyframes shakeAnim {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-4px); }
@@ -525,16 +450,25 @@
       80% { transform: translateX(2px); }
     }
 
-    /* 响应式 */
-    @media (max-width: 420px) {
-      .hud { padding: 6px 10px; }
-      .hud-value { font-size: 16px; }
-      .hud-label { font-size: 9px; }
-      #board { padding: 4px; gap: 2px; }
+    /* 目标完成闪光 */
+    .obj-complete-flash {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 7000;
+      animation: objFlash 0.6s ease forwards;
+    }
+    @keyframes objFlash {
+      0% { opacity: 0; }
+      30% { opacity: 1; }
+      100% { opacity: 0; }
     }
 
-    @media (min-height: 800px) {
-      #board { gap: 4px; padding: 10px; }
+    @media (max-width: 420px) {
+      .hud { padding: 6px 8px; }
+      .hud-value { font-size: 14px; }
+      .hud-label { font-size: 8px; }
+      #board { padding: 4px; gap: 2px; }
+      .level-objective { padding: 6px 10px; gap: 8px; }
+      .obj-icon { width: 28px; height: 28px; font-size: 16px; }
     }
   </style>
 </head>
@@ -546,6 +480,7 @@
   <div class="menu-glow menu-glow-2"></div>
   <div class="menu-title">NEON CRUSH</div>
   <div class="menu-subtitle">霓虹粉碎</div>
+  <div class="menu-gems" id="menu-gems"></div>
   <button class="menu-btn menu-btn-play" onclick="Game.start('classic')">▶ 经典模式</button>
   <button class="menu-btn menu-btn-endless" onclick="Game.start('endless')">∞ 无尽模式</button>
   <div class="menu-highscore" id="menu-highscore"></div>
@@ -560,7 +495,7 @@
     </div>
     <div class="hud-item hud-combo">
       <div class="hud-label">Combo</div>
-      <div class="hud-value" id="hud-combo">0</div>
+      <div class="hud-value" id="hud-combo">—</div>
     </div>
     <div class="hud-item hud-level">
       <div class="hud-label">Level</div>
@@ -571,6 +506,15 @@
       <div class="hud-value" id="hud-moves">30</div>
     </div>
     <button class="hud-btn" onclick="Game.pause()" title="暂停">⏸</button>
+  </div>
+  <div class="level-objective" id="level-objective">
+    <div class="obj-icon" id="obj-icon">🎯</div>
+    <div class="obj-info">
+      <div class="obj-title" id="obj-title">LEVEL 1</div>
+      <div class="obj-desc" id="obj-desc">消除 30 个宝石</div>
+      <div class="obj-progress-bar"><div class="obj-progress-fill" id="obj-progress" style="width:0%"></div></div>
+    </div>
+    <div class="obj-count" id="obj-count">0/30</div>
   </div>
   <div class="level-progress">
     <div class="level-progress-fill" id="level-progress" style="width:0%"></div>
@@ -594,7 +538,7 @@
       <div class="result-stat-value" id="result-combo">0</div>
     </div>
     <div class="result-stat">
-      <div class="result-stat-label">Blocks</div>
+      <div class="result-stat-label">Gems</div>
       <div class="result-stat-value" id="result-blocks">0</div>
     </div>
     <div class="result-stat">
@@ -609,8 +553,121 @@
 </div>
 
 <script>
+// ===== SVG 宝石图标系统 =====
+const GemSVG = (() => {
+  // 6种统一风格的宝石 — 都是切割宝石造型，仅颜色不同
+  const gems = [
+    // 0: 红宝石 (Ruby) — 菱形切割
+    (w=32,h=32) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+      <defs>
+        <linearGradient id="r1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff4466"/>
+          <stop offset="50%" stop-color="#cc0033"/>
+          <stop offset="100%" stop-color="#990022"/>
+        </linearGradient>
+      </defs>
+      <polygon points="16,2 30,12 26,28 6,28 2,12" fill="url(#r1)" stroke="#ff6688" stroke-width="0.5"/>
+      <polygon points="16,2 30,12 16,16 2,12" fill="#ff5577" opacity="0.6"/>
+      <polygon points="16,16 30,12 26,28" fill="#bb0033" opacity="0.5"/>
+      <polygon points="16,2 16,16 2,12" fill="#ff7799" opacity="0.4"/>
+      <line x1="16" y1="2" x2="16" y2="16" stroke="#ffaacc" stroke-width="0.3" opacity="0.6"/>
+      <polygon points="14,6 18,6 17,10 15,10" fill="#ffffff" opacity="0.35"/>
+    </svg>`,
+
+    // 1: 蓝宝石 (Sapphire) — 圆形切割
+    (w=32,h=32) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+      <defs>
+        <radialGradient id="b1" cx="40%" cy="35%">
+          <stop offset="0%" stop-color="#66ccff"/>
+          <stop offset="50%" stop-color="#0088dd"/>
+          <stop offset="100%" stop-color="#003366"/>
+        </radialGradient>
+      </defs>
+      <circle cx="16" cy="16" r="13" fill="url(#b1)" stroke="#44aaff" stroke-width="0.5"/>
+      <ellipse cx="16" cy="13" rx="10" ry="8" fill="#0099ee" opacity="0.3"/>
+      <path d="M10,8 Q16,4 22,8 Q18,12 16,12 Q14,12 10,8Z" fill="#88ddff" opacity="0.35"/>
+      <circle cx="12" cy="10" r="2" fill="#ffffff" opacity="0.3"/>
+      <circle cx="11" cy="9" r="0.8" fill="#ffffff" opacity="0.5"/>
+    </svg>`,
+
+    // 2: 翡翠 (Emerald) — 八角切割
+    (w=32,h=32) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#44ee88"/>
+          <stop offset="50%" stop-color="#009944"/>
+          <stop offset="100%" stop-color="#005522"/>
+        </linearGradient>
+      </defs>
+      <polygon points="10,3 22,3 29,10 29,22 22,29 10,29 3,22 3,10" fill="url(#g1)" stroke="#55ff99" stroke-width="0.5"/>
+      <polygon points="10,3 22,3 20,10 12,10" fill="#33cc77" opacity="0.5"/>
+      <polygon points="22,3 29,10 20,10" fill="#22aa55" opacity="0.4"/>
+      <polygon points="12,10 20,10 20,22 12,22" fill="#00bb55" opacity="0.25" stroke="#44dd88" stroke-width="0.3"/>
+      <polygon points="12,7 16,5 15,9 13,9" fill="#ffffff" opacity="0.3"/>
+    </svg>`,
+
+    // 3: 紫水晶 (Amethyst) — 三角切割
+    (w=32,h=32) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+      <defs>
+        <linearGradient id="p1" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stop-color="#cc77ff"/>
+          <stop offset="50%" stop-color="#8833cc"/>
+          <stop offset="100%" stop-color="#440088"/>
+        </linearGradient>
+      </defs>
+      <polygon points="16,2 30,28 2,28" fill="url(#p1)" stroke="#bb66ee" stroke-width="0.5"/>
+      <polygon points="16,2 23,15 9,15" fill="#aa55dd" opacity="0.5"/>
+      <polygon points="9,15 23,15 30,28 2,28" fill="#7722aa" opacity="0.35"/>
+      <line x1="16" y1="2" x2="16" y2="28" stroke="#cc88ff" stroke-width="0.3" opacity="0.4"/>
+      <line x1="16" y1="2" x2="9" y2="15" stroke="#cc88ff" stroke-width="0.3" opacity="0.3"/>
+      <line x1="16" y1="2" x2="23" y2="15" stroke="#cc88ff" stroke-width="0.3" opacity="0.3"/>
+      <polygon points="14,6 17,6 16,10" fill="#ffffff" opacity="0.3"/>
+    </svg>`,
+
+    // 4: 黄玉 (Topaz) — 梨形切割
+    (w=32,h=32) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+      <defs>
+        <radialGradient id="o1" cx="45%" cy="40%">
+          <stop offset="0%" stop-color="#ffbb44"/>
+          <stop offset="50%" stop-color="#ee8800"/>
+          <stop offset="100%" stop-color="#aa5500"/>
+        </radialGradient>
+      </defs>
+      <path d="M16,3 L24,10 Q28,20 16,30 Q4,20 8,10 Z" fill="url(#o1)" stroke="#ffaa33" stroke-width="0.5"/>
+      <path d="M16,3 L24,10 L16,14 L8,10 Z" fill="#ffcc55" opacity="0.5"/>
+      <path d="M16,14 L24,10 Q28,20 16,30Z" fill="#cc7700" opacity="0.3"/>
+      <path d="M13,6 L16,4 L15,9" fill="#ffffff" opacity="0.35"/>
+    </svg>`,
+
+    // 5: 白钻 (Diamond) — 经典钻石切割
+    (w=32,h=32) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+      <defs>
+        <linearGradient id="d1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#eeeeff"/>
+          <stop offset="30%" stop-color="#ccddff"/>
+          <stop offset="60%" stop-color="#99bbee"/>
+          <stop offset="100%" stop-color="#6688aa"/>
+        </linearGradient>
+      </defs>
+      <polygon points="16,2 28,10 16,30 4,10" fill="url(#d1)" stroke="#aaccee" stroke-width="0.5"/>
+      <polygon points="16,2 28,10 16,12 4,10" fill="#ccddff" opacity="0.6"/>
+      <polygon points="4,10 16,12 16,30" fill="#88aacc" opacity="0.4"/>
+      <polygon points="28,10 16,12 16,30" fill="#7799bb" opacity="0.5"/>
+      <polygon points="16,2 10,10 16,12 22,10" fill="#ddeeff" opacity="0.4"/>
+      <line x1="16" y1="2" x2="10" y2="10" stroke="#ffffff" stroke-width="0.3" opacity="0.5"/>
+      <line x1="16" y1="2" x2="22" y2="10" stroke="#ffffff" stroke-width="0.3" opacity="0.5"/>
+      <polygon points="12,5 16,3 15,8" fill="#ffffff" opacity="0.45"/>
+    </svg>`
+  ];
+
+  function get(index) { return gems[index] ? gems[index]() : ''; }
+  function getAll() { return gems.map((fn, i) => fn()); }
+
+  return { get, getAll };
+})();
+
 // ===== 音频引擎 =====
-const Audio = (() => {
+const SFX = (() => {
   let ctx = null;
   let enabled = true;
 
@@ -620,17 +677,16 @@ const Audio = (() => {
     return ctx;
   }
 
-  function pop() {
+  function pop(pitch) {
     if (!enabled) return;
     const c = getCtx();
-    const o = c.createOscillator();
-    const g = c.createGain();
+    const o = c.createOscillator(), g = c.createGain();
     o.type = 'sine';
-    o.frequency.value = 600 + Math.random() * 400;
+    o.frequency.value = 500 + (pitch || 0) * 80 + Math.random() * 100;
     g.gain.setValueAtTime(0.06, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.1);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.12);
     o.connect(g).connect(c.destination);
-    o.start(); o.stop(c.currentTime + 0.1);
+    o.start(); o.stop(c.currentTime + 0.12);
   }
 
   function combo(level) {
@@ -638,8 +694,7 @@ const Audio = (() => {
     const c = getCtx();
     const base = 400 + level * 80;
     [0, 0.08, 0.16].forEach((d, i) => {
-      const o = c.createOscillator();
-      const g = c.createGain();
+      const o = c.createOscillator(), g = c.createGain();
       o.type = 'sine';
       o.frequency.value = base + i * 120;
       g.gain.setValueAtTime(0.05, c.currentTime + d);
@@ -653,8 +708,7 @@ const Audio = (() => {
     if (!enabled) return;
     const c = getCtx();
     [523, 659, 784, 1047].forEach((f, i) => {
-      const o = c.createOscillator();
-      const g = c.createGain();
+      const o = c.createOscillator(), g = c.createGain();
       o.type = 'sine';
       o.frequency.value = f;
       g.gain.setValueAtTime(0.06, c.currentTime + i * 0.12);
@@ -665,11 +719,25 @@ const Audio = (() => {
     });
   }
 
+  function objectiveComplete() {
+    if (!enabled) return;
+    const c = getCtx();
+    [784, 988, 1175, 1568].forEach((f, i) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'triangle';
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0.05, c.currentTime + i * 0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i * 0.1 + 0.5);
+      o.connect(g).connect(c.destination);
+      o.start(c.currentTime + i * 0.1);
+      o.stop(c.currentTime + i * 0.1 + 0.5);
+    });
+  }
+
   function fail() {
     if (!enabled) return;
     const c = getCtx();
-    const o = c.createOscillator();
-    const g = c.createGain();
+    const o = c.createOscillator(), g = c.createGain();
     o.type = 'sawtooth';
     o.frequency.setValueAtTime(300, c.currentTime);
     o.frequency.exponentialRampToValueAtTime(100, c.currentTime + 0.4);
@@ -682,8 +750,7 @@ const Audio = (() => {
   function click() {
     if (!enabled) return;
     const c = getCtx();
-    const o = c.createOscillator();
-    const g = c.createGain();
+    const o = c.createOscillator(), g = c.createGain();
     o.type = 'sine';
     o.frequency.value = 1200;
     g.gain.setValueAtTime(0.03, c.currentTime);
@@ -692,61 +759,107 @@ const Audio = (() => {
     o.start(); o.stop(c.currentTime + 0.03);
   }
 
-  return { pop, combo, levelUp, fail, click, getCtx };
+  return { pop, combo, levelUp, objectiveComplete, fail, click, getCtx };
+})();
+
+// ===== 关卡目标系统 =====
+const Objectives = (() => {
+  // 目标类型
+  const TYPES = {
+    GEMS_TOTAL: 'gems_total',       // 消除N个宝石
+    GEMS_COLOR: 'gems_color',       // 消除N个指定颜色宝石
+    SCORE: 'score',                 // 达到N分
+    BIG_MATCH: 'big_match',         // 一次消除N个以上
+    COMBO: 'combo',                 // 达到Nx combo
+  };
+
+  const COLOR_NAMES = ['红宝石', '蓝宝石', '翡翠', '紫水晶', '黄玉', '白钻'];
+  const COLOR_ICONS = ['🔴', '🔵', '🟢', '🟣', '🟠', '⚪'];
+
+  // 关卡目标配置
+  function getObjective(level) {
+    const pool = [];
+
+    if (level <= 3) {
+      // 前3关：简单的消除数量
+      const target = 20 + level * 10;
+      return { type: TYPES.GEMS_TOTAL, target, current: 0, icon: '💎', desc: `消除 ${target} 个宝石` };
+    }
+
+    if (level % 5 === 0) {
+      // 每5关：分数目标
+      const target = level * 300;
+      return { type: TYPES.SCORE, target, current: 0, icon: '⭐', desc: `获得 ${target.toLocaleString()} 分` };
+    }
+
+    if (level % 3 === 0) {
+      // 每3关：大消除挑战
+      const target = 2 + Math.floor(level / 5);
+      const size = 5 + Math.floor(level / 8);
+      return { type: TYPES.BIG_MATCH, target, current: 0, extra: size, icon: '💥', desc: `完成 ${target} 次 ${size}+ 连消` };
+    }
+
+    if (level % 4 === 0) {
+      // 每4关：combo 挑战
+      const target = 3 + Math.floor(level / 6);
+      return { type: TYPES.COMBO, target, current: 0, icon: '🔥', desc: `达到 ${target}x Combo` };
+    }
+
+    // 默认：指定颜色消除
+    const colorIdx = (level - 1) % 6;
+    const target = 15 + level * 5;
+    return {
+      type: TYPES.GEMS_COLOR, target, current: 0, extra: colorIdx,
+      icon: COLOR_ICONS[colorIdx],
+      desc: `消除 ${target} 个${COLOR_NAMES[colorIdx]}`
+    };
+  }
+
+  return { TYPES, getObjective };
 })();
 
 // ===== 游戏核心 =====
 const Game = (() => {
-  const COLS = 8;
-  const ROWS = 10;
-  const COLORS = 6;
-  const ICONS = ['💎', '🔷', '🟢', '🔮', '🔥', '⚡'];
-  const COLOR_NAMES = ['pink', 'blue', 'green', 'purple', 'orange', 'yellow'];
+  const COLS = 8, ROWS = 10, COLORS = 6;
 
-  let grid = [];
-  let score = 0;
-  let combo = 0;
-  let maxCombo = 0;
-  let level = 1;
-  let moves = 30;
-  let totalBlocks = 0;
-  let levelTarget = 500;
-  let levelScore = 0;
-  let mode = 'classic';
-  let processing = false;
-  let gameOver = false;
+  let grid = [], score = 0, combo = 0, maxCombo = 0;
+  let level = 1, moves = 30, totalBlocks = 0;
+  let levelTarget = 500, levelScore = 0;
+  let mode = 'classic', processing = false, gameOver = false;
+  let objective = null, objectiveComplete = false;
+  let colorCounts = [0,0,0,0,0,0]; // 每种颜色消除计数
 
   const boardEl = document.getElementById('board');
 
   function start(gameMode) {
     mode = gameMode;
-    score = 0;
-    combo = 0;
-    maxCombo = 0;
-    level = 1;
-    moves = mode === 'classic' ? 30 : 999;
-    totalBlocks = 0;
-    levelTarget = 500;
-    levelScore = 0;
-    processing = false;
-    gameOver = false;
+    score = 0; combo = 0; maxCombo = 0;
+    level = 1; moves = mode === 'classic' ? 30 : 999;
+    totalBlocks = 0; levelTarget = 500; levelScore = 0;
+    processing = false; gameOver = false;
+    objectiveComplete = false;
+    colorCounts = [0,0,0,0,0,0];
+
+    objective = mode === 'classic' ? Objectives.getObjective(1) : null;
 
     document.getElementById('menu-screen').classList.add('hidden');
     document.getElementById('game-screen').style.display = 'flex';
     document.getElementById('result-screen').style.display = 'none';
 
+    const objEl = document.getElementById('level-objective');
     if (mode === 'endless') {
+      objEl.style.display = 'none';
       document.getElementById('hud-moves-label').textContent = 'TIME';
     } else {
+      objEl.style.display = 'flex';
       document.getElementById('hud-moves-label').textContent = 'MOVES';
+      updateObjectiveDisplay();
     }
 
     boardEl.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
     boardEl.style.width = Math.min(window.innerWidth - 24, 420) + 'px';
 
-    initGrid();
-    render();
-    updateHUD();
+    initGrid(); render(); updateHUD();
     updateHighscoreDisplay();
   }
 
@@ -758,16 +871,14 @@ const Game = (() => {
         grid[r][c] = Math.floor(Math.random() * COLORS);
       }
     }
-    // 确保没有初始的大型同色连通块（>= 10 个），避免开局就能一击得分过高
     let tries = 0;
     while (tries < 50) {
       let largeGroup = false;
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
-          const group = findGroup(r, c);
-          if (group.length >= 10) {
+          if (findGroup(r, c).length >= 10) {
             largeGroup = true;
-            // 打散这个组中的一些格子
+            const group = findGroup(r, c);
             for (let i = 5; i < group.length; i++) {
               grid[group[i][0]][group[i][1]] = Math.floor(Math.random() * COLORS);
             }
@@ -785,7 +896,6 @@ const Game = (() => {
     const visited = new Set();
     const stack = [[row, col]];
     const group = [];
-
     while (stack.length > 0) {
       const [r, c] = stack.pop();
       const key = r * COLS + c;
@@ -794,9 +904,8 @@ const Game = (() => {
       if (grid[r][c] !== color) continue;
       visited.add(key);
       group.push([r, c]);
-      stack.push([r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]);
+      stack.push([r-1,c],[r+1,c],[r,c-1],[r,c+1]);
     }
-
     return group;
   }
 
@@ -805,11 +914,12 @@ const Game = (() => {
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         const cell = document.createElement('div');
-        cell.className = `cell cell-${grid[r][c]}`;
+        const colorIdx = grid[r][c];
+        cell.className = `cell cell-${colorIdx}`;
         cell.dataset.row = r;
         cell.dataset.col = c;
-        if (grid[r][c] >= 0 && grid[r][c] < ICONS.length) {
-          cell.textContent = ICONS[grid[r][c]];
+        if (colorIdx >= 0 && colorIdx < COLORS) {
+          cell.innerHTML = GemSVG.get(colorIdx);
         }
         cell.addEventListener('click', () => onCellClick(r, c));
         cell.addEventListener('mouseenter', () => onCellHover(r, c));
@@ -825,8 +935,7 @@ const Game = (() => {
     const group = findGroup(row, col);
     if (group.length >= 2) {
       group.forEach(([r, c]) => {
-        const idx = r * COLS + c;
-        const cell = boardEl.children[idx];
+        const cell = boardEl.children[r * COLS + c];
         if (cell) cell.classList.add('highlighted');
       });
     }
@@ -841,10 +950,8 @@ const Game = (() => {
 
     const group = findGroup(row, col);
     if (group.length < 2) {
-      Audio.click();
-      // 震一下提示不能消
-      const idx = row * COLS + col;
-      const cell = boardEl.children[idx];
+      SFX.click();
+      const cell = boardEl.children[row * COLS + col];
       if (cell) {
         cell.style.animation = 'none';
         cell.offsetHeight;
@@ -855,9 +962,8 @@ const Game = (() => {
     }
 
     processing = true;
-
-    // 计算得分
     const n = group.length;
+    const colorIdx = grid[row][col];
     const baseScore = n * n * 10;
     combo++;
     if (combo > maxCombo) maxCombo = combo;
@@ -866,78 +972,108 @@ const Game = (() => {
     score += points;
     levelScore += points;
     totalBlocks += n;
+    colorCounts[colorIdx] += n;
 
-    if (mode === 'classic') {
-      moves--;
+    if (mode === 'classic') moves--;
+
+    // 更新目标
+    if (objective && !objectiveComplete) {
+      updateObjective(n, colorIdx, points);
     }
 
     // 音效
-    if (n >= 8) {
-      Audio.combo(Math.min(combo, 5));
-    } else {
-      Audio.pop();
-    }
+    n >= 8 ? SFX.combo(Math.min(combo, 5)) : SFX.pop(colorIdx);
 
-    // 显示分数飘字
     showScoreFloat(row, col, points);
+    if (combo >= 3) showComboPopup(combo);
+    if (n >= 6) showScreenFlash(colorIdx);
 
-    // Combo 提示
-    if (combo >= 3) {
-      showComboPopup(combo);
-    }
-
-    // 大消除屏幕闪光
-    if (n >= 6) {
-      const color = grid[row][col];
-      showScreenFlash(color);
-    }
-
-    // 消除动画
     group.forEach(([r, c]) => {
-      const idx = r * COLS + c;
-      const cell = boardEl.children[idx];
+      const cell = boardEl.children[r * COLS + c];
       if (cell) cell.classList.add('removing');
     });
 
     setTimeout(() => {
-      // 清除格子
-      group.forEach(([r, c]) => {
-        grid[r][c] = -1;
-      });
-
-      // 下落
+      group.forEach(([r, c]) => { grid[r][c] = -1; });
       applyGravity();
-
-      // 填充新方块
       fillEmpty();
-
       render();
       updateHUD();
 
-      // 检查升级
-      if (levelScore >= levelTarget) {
-        levelUp();
-      }
-
-      // 重置 combo 计时器
+      if (levelScore >= levelTarget) levelUp();
       resetComboTimer();
 
-      // 检查游戏是否结束
       setTimeout(() => {
         processing = false;
         checkGameOver();
       }, 100);
-    }, 300);
+    }, 350);
+  }
+
+  function updateObjective(matchSize, colorIdx, points) {
+    const obj = objective;
+    switch (obj.type) {
+      case Objectives.TYPES.GEMS_TOTAL:
+        obj.current += matchSize;
+        break;
+      case Objectives.TYPES.GEMS_COLOR:
+        if (colorIdx === obj.extra) obj.current += matchSize;
+        break;
+      case Objectives.TYPES.SCORE:
+        obj.current = score;
+        break;
+      case Objectives.TYPES.BIG_MATCH:
+        if (matchSize >= obj.extra) obj.current++;
+        break;
+      case Objectives.TYPES.COMBO:
+        if (combo > obj.current) obj.current = combo;
+        break;
+    }
+
+    updateObjectiveDisplay();
+
+    if (obj.current >= obj.target && !objectiveComplete) {
+      objectiveComplete = true;
+      SFX.objectiveComplete();
+      showObjectiveComplete();
+    }
+  }
+
+  function updateObjectiveDisplay() {
+    if (!objective) return;
+    const obj = objective;
+    document.getElementById('obj-icon').textContent = obj.icon;
+    document.getElementById('obj-title').textContent = `LEVEL ${level} 目标`;
+    document.getElementById('obj-desc').textContent = obj.desc;
+
+    const pct = Math.min((obj.current / obj.target) * 100, 100);
+    const progressEl = document.getElementById('obj-progress');
+    progressEl.style.width = pct + '%';
+    progressEl.className = 'obj-progress-fill' + (pct >= 100 ? ' complete' : '');
+
+    const countEl = document.getElementById('obj-count');
+    const displayCurrent = obj.type === Objectives.TYPES.SCORE
+      ? Math.min(obj.current, obj.target).toLocaleString()
+      : Math.min(obj.current, obj.target);
+    const displayTarget = obj.type === Objectives.TYPES.SCORE
+      ? obj.target.toLocaleString()
+      : obj.target;
+    countEl.textContent = `${displayCurrent}/${displayTarget}`;
+    countEl.className = 'obj-count' + (obj.current >= obj.target ? ' done' : '');
+  }
+
+  function showObjectiveComplete() {
+    const el = document.createElement('div');
+    el.className = 'obj-complete-flash';
+    el.style.background = 'radial-gradient(ellipse at center, rgba(0,255,136,0.2) 0%, transparent 70%)';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 600);
   }
 
   let comboTimer = null;
-
   function resetComboTimer() {
     clearTimeout(comboTimer);
-    comboTimer = setTimeout(() => {
-      combo = 0;
-      updateHUD();
-    }, 3000);
+    comboTimer = setTimeout(() => { combo = 0; updateHUD(); }, 3000);
   }
 
   function applyGravity() {
@@ -950,134 +1086,109 @@ const Game = (() => {
           writePos--;
         }
       }
-      // 空位填 -1
-      for (let r = writePos; r >= 0; r--) {
-        grid[r][c] = -1;
-      }
+      for (let r = writePos; r >= 0; r--) grid[r][c] = -1;
     }
   }
 
   function fillEmpty() {
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        if (grid[r][c] === -1) {
-          grid[r][c] = Math.floor(Math.random() * COLORS);
-        }
-      }
-    }
+    for (let r = 0; r < ROWS; r++)
+      for (let c = 0; c < COLS; c++)
+        if (grid[r][c] === -1) grid[r][c] = Math.floor(Math.random() * COLORS);
   }
 
   function levelUp() {
     level++;
     levelScore = 0;
     levelTarget = Math.floor(levelTarget * 1.5);
-    Audio.levelUp();
 
-    // 全屏闪光
-    showScreenFlash(-1);
-
-    // 经典模式补充步数
+    // 经典模式：进入下一关，重置目标
     if (mode === 'classic') {
       moves += 5;
+      objectiveComplete = false;
+      colorCounts = [0,0,0,0,0,0];
+      objective = Objectives.getObjective(level);
+      updateObjectiveDisplay();
     }
+
+    SFX.levelUp();
+    showLevelUpBanner();
+    showScreenFlash(-1);
+  }
+
+  function showLevelUpBanner() {
+    const el = document.createElement('div');
+    el.className = 'level-up-banner';
+    el.innerHTML = `<div class="lu-title">LEVEL ${level}</div><div class="lu-sub">+5 步数</div>`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1800);
   }
 
   function checkGameOver() {
     if (gameOver) return;
+    if (mode === 'classic' && moves <= 0) { endGame(); return; }
 
-    // 经典模式：步数耗尽
-    if (mode === 'classic' && moves <= 0) {
-      endGame();
-      return;
-    }
-
-    // 检查是否还有可消除的组
     let hasMove = false;
-    for (let r = 0; r < ROWS && !hasMove; r++) {
-      for (let c = 0; c < COLS && !hasMove; c++) {
-        const group = findGroup(r, c);
-        if (group.length >= 2) hasMove = true;
-      }
-    }
+    for (let r = 0; r < ROWS && !hasMove; r++)
+      for (let c = 0; c < COLS && !hasMove; c++)
+        if (findGroup(r, c).length >= 2) hasMove = true;
 
-    if (!hasMove) {
-      // 重新洗牌
-      shuffleBoard();
-    }
+    if (!hasMove) shuffleBoard();
   }
 
   function shuffleBoard() {
-    // 收集所有颜色
     const colors = [];
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        colors.push(grid[r][c]);
-      }
-    }
+    for (let r = 0; r < ROWS; r++)
+      for (let c = 0; c < COLS; c++) colors.push(grid[r][c]);
 
-    // Fisher-Yates 洗牌
     for (let i = colors.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [colors[i], colors[j]] = [colors[j], colors[i]];
     }
 
     let idx = 0;
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        grid[r][c] = colors[idx++];
-      }
-    }
+    for (let r = 0; r < ROWS; r++)
+      for (let c = 0; c < COLS; c++) grid[r][c] = colors[idx++];
 
     render();
 
-    // 如果洗牌后还是没有可消除的，游戏结束
     let hasMove = false;
-    for (let r = 0; r < ROWS && !hasMove; r++) {
-      for (let c = 0; c < COLS && !hasMove; c++) {
+    for (let r = 0; r < ROWS && !hasMove; r++)
+      for (let c = 0; c < COLS && !hasMove; c++)
         if (findGroup(r, c).length >= 2) hasMove = true;
-      }
-    }
 
-    if (!hasMove) {
-      endGame();
-    }
+    if (!hasMove) endGame();
   }
 
   function endGame() {
     gameOver = true;
-    Audio.fail();
-
-    setTimeout(() => {
-      showResult();
-    }, 500);
+    SFX.fail();
+    setTimeout(() => showResult(), 500);
   }
 
   function showResult() {
     document.getElementById('game-screen').style.display = 'none';
-    const resultEl = document.getElementById('result-screen');
-    resultEl.style.display = 'flex';
+    document.getElementById('result-screen').style.display = 'flex';
 
-    document.getElementById('result-title').textContent = score >= levelTarget ? 'EXCELLENT!' : 'GAME OVER';
+    const completed = objectiveComplete;
+    document.getElementById('result-title').textContent =
+      completed ? 'EXCELLENT!' : score >= 2000 ? 'WELL DONE' : 'GAME OVER';
     document.getElementById('result-subtitle').textContent =
-      mode === 'classic' ? '经典模式' : '无尽模式';
+      mode === 'classic'
+        ? (completed ? `关卡 ${level} 目标达成！` : `关卡 ${level} · 经典模式`)
+        : '无尽模式';
 
     document.getElementById('result-score').textContent = score.toLocaleString();
     document.getElementById('result-combo').textContent = maxCombo + 'x';
     document.getElementById('result-blocks').textContent = totalBlocks;
     document.getElementById('result-level').textContent = level;
 
-    // 星级
     const stars = score >= 5000 ? 3 : score >= 2000 ? 2 : score >= 500 ? 1 : 0;
-    document.getElementById('result-stars').textContent =
-      '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    document.getElementById('result-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
 
-    // 检查最高分
     const key = `neon-crush-highscore-${mode}`;
     const prev = parseInt(localStorage.getItem(key) || '0');
     const isNewRecord = score > prev;
-    if (isNewRecord) {
-      localStorage.setItem(key, String(score));
-    }
+    if (isNewRecord) localStorage.setItem(key, String(score));
     document.getElementById('result-record').style.display = isNewRecord ? 'block' : 'none';
 
     document.getElementById('result-retry').onclick = () => start(mode);
@@ -1097,14 +1208,11 @@ const Game = (() => {
     const boardRect = boardEl.getBoundingClientRect();
     const cellW = boardRect.width / COLS;
     const cellH = boardRect.height / ROWS;
-    const x = boardRect.left + col * cellW + cellW / 2;
-    const y = boardRect.top + row * cellH;
-
     const el = document.createElement('div');
     el.className = 'score-float';
     el.textContent = '+' + points;
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
+    el.style.left = (boardRect.left + col * cellW + cellW / 2) + 'px';
+    el.style.top = (boardRect.top + row * cellH) + 'px';
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 800);
   }
@@ -1113,16 +1221,15 @@ const Game = (() => {
     const el = document.createElement('div');
     el.className = 'combo-popup';
     el.textContent = c + 'x COMBO!';
-    el.style.left = '50%';
-    el.style.top = '40%';
+    el.style.left = '50%'; el.style.top = '40%';
     el.style.transform = 'translate(-50%, -50%)';
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 1000);
   }
 
   function showScreenFlash(colorIdx) {
-    const colors = ['rgba(255,45,122,0.15)', 'rgba(0,212,255,0.15)', 'rgba(0,255,136,0.15)',
-                    'rgba(180,74,255,0.15)', 'rgba(255,136,0,0.15)', 'rgba(255,221,0,0.15)'];
+    const colors = ['rgba(255,45,122,0.15)','rgba(0,212,255,0.15)','rgba(0,255,136,0.15)',
+                    'rgba(180,74,255,0.15)','rgba(255,136,0,0.15)','rgba(255,221,0,0.15)'];
     const c = colorIdx >= 0 && colorIdx < colors.length ? colors[colorIdx] : 'rgba(255,255,255,0.1)';
     const el = document.createElement('div');
     el.className = 'screen-flash';
@@ -1133,9 +1240,7 @@ const Game = (() => {
 
   function pause() {
     if (gameOver) return;
-    if (confirm('暂停中\n\n返回主菜单？')) {
-      toMenu();
-    }
+    if (confirm('暂停中\n\n返回主菜单？')) toMenu();
   }
 
   function toMenu() {
@@ -1146,24 +1251,26 @@ const Game = (() => {
   }
 
   function updateHighscoreDisplay() {
-    const classicHigh = parseInt(localStorage.getItem('neon-crush-highscore-classic') || '0');
-    const endlessHigh = parseInt(localStorage.getItem('neon-crush-highscore-endless') || '0');
+    const ch = parseInt(localStorage.getItem('neon-crush-highscore-classic') || '0');
+    const eh = parseInt(localStorage.getItem('neon-crush-highscore-endless') || '0');
     const el = document.getElementById('menu-highscore');
-    if (classicHigh > 0 || endlessHigh > 0) {
-      let html = '';
-      if (classicHigh > 0) html += `经典最高分 <strong>${classicHigh.toLocaleString()}</strong>`;
-      if (classicHigh > 0 && endlessHigh > 0) html += ' · ';
-      if (endlessHigh > 0) html += `无尽最高分 <strong>${endlessHigh.toLocaleString()}</strong>`;
-      el.innerHTML = html;
-    } else {
-      el.innerHTML = '点击开始你的第一局游戏';
-    }
+    let html = '';
+    if (ch > 0) html += `经典最高分 <strong>${ch.toLocaleString()}</strong>`;
+    if (ch > 0 && eh > 0) html += ' · ';
+    if (eh > 0) html += `无尽最高分 <strong>${eh.toLocaleString()}</strong>`;
+    el.innerHTML = html || '点击开始你的第一局游戏';
   }
 
-  // 初始化
+  // 主菜单展示宝石
+  const menuGemsEl = document.getElementById('menu-gems');
+  GemSVG.getAll().forEach(svg => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = svg;
+    menuGemsEl.appendChild(wrapper.firstElementChild);
+  });
+
   updateHighscoreDisplay();
 
-  // 监听窗口 resize，调整棋盘大小
   window.addEventListener('resize', () => {
     if (document.getElementById('game-screen').style.display === 'flex') {
       boardEl.style.width = Math.min(window.innerWidth - 24, 420) + 'px';
@@ -1173,6 +1280,5 @@ const Game = (() => {
   return { start, pause, toMenu };
 })();
 </script>
-
 </body>
 </html>
